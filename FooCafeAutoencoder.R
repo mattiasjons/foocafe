@@ -1,4 +1,5 @@
 library(keras)
+library(zoo)
 modeltrain <- read.csv("hour12.csv", stringsAsFactors=FALSE)
 
 vibration <- modeltrain[modeltrain$SensorType==3,'Value']
@@ -6,8 +7,8 @@ vibration <- vibration[23000:length(vibration)] #take a small period of the time
 plot(vibration, type='l')
 
 vibration <- ((vibration-min(vibration))/(max(vibration)-min(vibration)))
+vibration <- zoo::rollmean(vibration, 5)
 plot(vibration, type='l')
-
 
 stride = 1
 x_len = 300
@@ -49,5 +50,5 @@ mean(reconstructionError)
 abline(v=c(sd(predvector)*3, sd(predvector)*-3), col="red")
 
 plot(vibration, type='l')
-abline(v=which(abs(predvector) > 0.75), col="red")
+abline(v=which(abs(predvector) > 0.3), col="red")
 
